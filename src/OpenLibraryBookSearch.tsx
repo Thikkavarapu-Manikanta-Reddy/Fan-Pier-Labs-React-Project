@@ -7,7 +7,7 @@ import {
   Col,
   ToggleButton,
   ToggleButtonGroup,
-  Spinner
+  Spinner,
 } from "react-bootstrap";
 import axios from "axios";
 
@@ -71,72 +71,70 @@ function OpenLibraryBookSearch() {
   return (
     <>
       <Container>
-        {loading ? (
+        <Row className="my-4">
+          <Col>
+            <Form>
+              <FormControl
+                type="text"
+                placeholder="Search for a book"
+                disabled={loading}
+                onKeyUp={betterFunction}
+              />
+            </Form>
+          </Col>
+        </Row>
+        {books.length && !loading ? (
           <Row>
+            <Col>
+              <ToggleButtonGroup
+                type="radio"
+                name="sortOrder"
+                value={sortOrder}
+                onChange={handleSortChange}
+              >
+                <ToggleButton id="tbg-radio-1" value={"relevance"}>
+                  Relevance
+                </ToggleButton>
+                <ToggleButton id="tbg-radio-2" value={"year"}>
+                  Year
+                </ToggleButton>
+              </ToggleButtonGroup>
+            </Col>
+          </Row>
+        ) : null}
+        <Row>
+          {loading ? (
             <Col className="text-center my-3">
               <Spinner animation="border" role="status">
                 <span className="visually-hidden">Loading...</span>
               </Spinner>
             </Col>
-          </Row>
-        ) : (
-          <>
-            <Row className="my-4">
-              <Col>
-                <Form>
-                  <FormControl
-                    type="text"
-                    placeholder="Search for a book"
-                    onKeyUp={betterFunction}
-                  />
-                </Form>
+          ) : (
+            books.map((book, index) => (
+              <Col key={index} md={4} className="my-3">
+                <div className="border p-3">
+                  <h5>{book.title}</h5>
+                  <p>
+                    <strong>Author(s):</strong>{" "}
+                    {book?.author_name?.length
+                      ? book.author_name.join(", ")
+                      : "N/A"}
+                  </p>
+                  <p>
+                    <strong>First Published:</strong> {book.first_publish_year}
+                  </p>
+                  <p>
+                    <strong>ISBN:</strong> {book.isbn ? book.isbn[0] : "N/A"}
+                  </p>
+                  <p>
+                    <strong>Number of Pages:</strong>{" "}
+                    {book.number_of_pages_median}
+                  </p>
+                </div>
               </Col>
-            </Row>
-            <Row>
-              <Col>
-                <ToggleButtonGroup
-                  type="radio"
-                  name="sortOrder"
-                  value={sortOrder}
-                  onChange={handleSortChange}
-                >
-                  <ToggleButton id="tbg-radio-1" value={"relevance"}>
-                    Relevance
-                  </ToggleButton>
-                  <ToggleButton id="tbg-radio-2" value={"year"}>
-                    Year
-                  </ToggleButton>
-                </ToggleButtonGroup>
-              </Col>
-            </Row>
-            <Row>
-              {books.map((book, index) => (
-                <Col key={index} md={4} className="my-3">
-                  <div className="border p-3">
-                    <h5>{book.title}</h5>
-                    <p>
-                      <strong>Author(s):</strong>{" "}
-                      {book?.author_name?.length
-                        ? book.author_name.join(", ")
-                        : "N/A"}
-                    </p>
-                    <p>
-                      <strong>First Published:</strong>{" "}
-                      {book.first_publish_year}
-                    </p>
-                    <p>
-                      <strong>ISBN:</strong> {book.isbn ? book.isbn[0] : "N/A"}
-                    </p>
-                    <p>
-                      <strong>Number of Pages:</strong>{" "}
-                      {book.number_of_pages_median}
-                    </p>
-                  </div>
-                </Col>
-              ))}
-            </Row>
-          </>
-        )}
+            ))
+          )}
+        </Row>
       </Container>
     </>
   );
